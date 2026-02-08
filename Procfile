@@ -1,1 +1,1 @@
-web: gunicorn tweet_poster:app
+worker: python tweet_poster.py
