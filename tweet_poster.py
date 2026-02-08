@@ -25,4 +25,19 @@ except Exception as e:
                   row = cur.fetchone()
                   cur.close()
                   if row is None:
-                                    logger.info
+                                    logger.info("No tweets")
+                                return
+        tid, text = row
+        twid = get_twitter().create_tweet(text=text)["data"]["id"]
+        cur2 = conn.cursor()
+        cur2.execute("UPDATE tweet_queue SET status='posted', posted_at=%s, twitter_id=%s WHERE id=%s", (datetime.now(), str(twid), tid))
+        conn.commit()
+        cur2.close()
+        logger.info(f"Posted: ID {twid}")
+except Exception as e:
+        logger.error(f"Tweet failed: {e}")
+finally:
+        conn.close()
+        logger.info("Done")
+if __name__ == "__main__":
+      main()
